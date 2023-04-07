@@ -1,9 +1,10 @@
 import pygame
 from pygame.draw import *
 from random import randint
+
 pygame.init()
 
-FPS = 2
+FPS = 1
 screen = pygame.display.set_mode((1200, 900))
 
 RED = (255, 0, 0)
@@ -18,9 +19,10 @@ COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
 points = 0
 
 def new_ball():
-    '''рисует новый шарик '''
-
-    global x,y,r
+    """
+    Функция рисует новый шарик случайного радиуса и цвета в случайном месте на экране
+    """
+    global x, y, r
     x = randint(100, 1100)
     y = randint(100, 900)
     r = randint(10, 100)
@@ -28,31 +30,54 @@ def new_ball():
     circle(screen, color, (x, y), r)
 
 def click(event):
+    """
+    Функция обрабатывает клик пользователя и увеличивает количество очков при попадании в шарик
+    """
     global points
-    pos_x = max(event.pos[0], x) - min(event.pos[0], x)
-    pos_y = max(event.pos[1], y) - min(event.pos[1], y)
-
+    pos_x = event.pos[0]
+    pos_y = event.pos[1]
 
     if (pos_x - x) ** 2 + (pos_y - y) ** 2 <= r ** 2:
         points += 1
+        print(points)
 
-pygame.display.update()
-clock = pygame.time.Clock()
-finished = False
 
-while not finished:
-    clock.tick(FPS)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            finished = True
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            click(event)
-
-    for i in range (randint(1,4)):
-        new_ball()
+def update_display():
+    """
+    Функция обновляет экран
+    """
     pygame.display.update()
+
+def fill_screen():
+    """
+    Функция заполняет экран черным цветом
+    """
     screen.fill(BLACK)
 
-pygame.quit()
+def run_game():
+    """
+    Функция запускает основной цикл игры
+    """
+    global finished, clock
+    clock = pygame.time.Clock()
+    finished = False
 
-print('Total points:', points)
+    while not finished:
+        clock.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                finished = True
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                click(event)
+
+        for i in range(randint(1, 4)):
+            new_ball()
+
+        update_display()
+        fill_screen()
+
+    pygame.quit()
+
+if __name__ == '__main__':
+    run_game()
+    print('Total points:', points)
